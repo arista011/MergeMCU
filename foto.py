@@ -6,44 +6,48 @@ pdf_folder = "a-pdf"
 foto_folder = "a-foto"
 output_folder = "hasil"
 
-# Ukuran foto 3x4 cm dalam satuan point (1 cm = 28.35 pt)
+# Ukuran foto (3x4 cm) dalam satuan point (1 cm = 28.35 pt)
 foto_width = 3 * 28.35
 foto_height = 4 * 28.35
 
-# Margin dari tepi kertas
-margin_right = 30  # pt
-margin_top = 30   # pt
+# Margin dari tepi kertas (pojok kanan atas)
+margin_right = 72  # pt
+margin_top = 170    # pt
 
+# Pastikan folder hasil ada
 os.makedirs(output_folder, exist_ok=True)
 
-# === PROSES GABUNG ===
+# === LOOP SETIAP FILE PDF ===
 for pdf_file in os.listdir(pdf_folder):
     if not pdf_file.lower().endswith(".pdf"):
         continue
 
-    base_name = os.path.splitext(pdf_file)[0]  # contoh: "1234 - aris"
-    foto_name_jpg = os.path.join(foto_folder, base_name + ".jpg")
-    foto_name_jpeg = os.path.join(foto_folder, base_name + ".jpeg")
+    base_name = os.path.splitext(pdf_file)[0]
+    pdf_path = os.path.join(pdf_folder, pdf_file)
 
-    # Cek ekstensi foto yang tersedia
-    foto_path = None
-    if os.path.exists(foto_name_jpg):
-        foto_path = foto_name_jpg
-    elif os.path.exists(foto_name_jpeg):
-        foto_path = foto_name_jpeg
+    # Coba cari file foto dengan ekstensi .jpg atau .jpeg
+    foto_path_jpg = os.path.join(foto_folder, base_name + ".jpg")
+    foto_path_jpeg = os.path.join(foto_folder, base_name + ".jpeg")
 
-    if not foto_path:
-        print(f"⚠️ Foto tidak ditemukan untuk: {pdf_file}")
+    if os.path.exists(foto_path_jpg):
+        foto_path = foto_path_jpg
+    elif os.path.exists(foto_path_jpeg):
+        foto_path = foto_path_jpeg
+    else:
+        print(f"⚠️ Foto tidak ditemukan untuk {pdf_file}")
         continue
 
-    pdf_path = os.path.join(pdf_folder, pdf_file)
+    # === PROSES MERGE ===
     doc = fitz.open(pdf_path)
+    if len(doc) < 2:
+        print(f"⚠️ {pdf_file} hanya memiliki 1 halaman, dilewati.")
+        doc.close()
+        continue
 
-    # Ambil halaman pertama saja
-    page = doc[0]
+    page = doc[1]  # halaman ke-2 (index dimulai dari 0)
     rect = page.rect
 
-    # Tentukan posisi pojok kanan atas
+    # Hitung posisi pojok kanan atas
     x1 = rect.width - foto_width - margin_right
     y1 = margin_top
     x2 = x1 + foto_width
@@ -58,6 +62,6 @@ for pdf_file in os.listdir(pdf_folder):
     doc.save(output_path)
     doc.close()
 
-    print(f"✅ Selesai: {output_path}")
+    print(f"✅ {pdf_file} → foto berhasil ditempel di halaman ke-2 → {output_path}")
 
-print("\n🎉 Semua PDF berhasil digabung di folder 'hasil/'")
+print("\n🎉 Semua file selesai diproses!")

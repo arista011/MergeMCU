@@ -8,13 +8,18 @@ folder_path = "hasil/"      # Folder PDF hasil
 output_path = "ABSEN - STATUS.xlsx"  # File hasil update
 
 # === BACA EXCEL ===
-df = pd.read_excel(excel_path)
+df = pd.read_excel(excel_path, dtype=str)  # baca semua kolom sebagai string
+df = df.fillna("")  # ganti NaN jadi string kosong
 
-# Pastikan kolom nama sesuai
-df["NIK"] = df["NIK"].astype(str).str.strip()
-df["STATUS"] = df["STATUS"].astype(str).str.strip()
+# Pastikan kolom yang diperlukan ada
+required_cols = {"NIK", "STATUS"}
+if not required_cols.issubset(df.columns):
+    raise Exception(f"Kolom {required_cols} tidak ditemukan di Excel!")
 
-# === Ambil daftar NIK dari file PDF ===
+# Bersihkan format NIK dari ".0" dan spasi
+df["NIK"] = df["NIK"].str.replace(r"\.0$", "", regex=True).str.strip()
+
+# === Ambil daftar NIK dari file PDF di folder ===
 nik_folder = []
 for fname in os.listdir(folder_path):
     if fname.lower().endswith(".pdf"):
