@@ -3,7 +3,7 @@ import pandas as pd
 
 # === KONFIGURASI ===
 excel_file = "Data.xlsx"
-folders = ["f-ro", "f-spiro", "f-ekg"]  # folder yang akan diproses
+folders = ["e-audio", "e-ekg", "e-ilo", "e-ro", "e-spiro", "f-ekg", "f-ilo", "f-ro", "f-spiro"]  # folder yang akan diproses
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
 # === BACA DATA EXCEL ===

@@ -2,7 +2,7 @@ import os
 import glob
 
 # Daftar folder target
-folders = ["a-foto","a-pdf","lab", "f-ro", "e-ro", "f-ekg", "e-ekg", "f-spiro", "e-spiro", "e-audio","hasil"]
+folders = ["a-pdf","lab", "f-ro", "e-ro", "f-ekg", "e-ekg", "f-spiro", "e-spiro", "e-audio", "f-tread","e-tread","hasil"]
 
 # Base path lokasi folder berada
 base_dir = os.path.dirname(os.path.abspath(__file__))
